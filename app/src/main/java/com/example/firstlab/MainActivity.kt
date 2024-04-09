@@ -144,7 +144,6 @@ fun ConfirmPasswordTextField(){
 fun PagerContent() {
     var page by remember { mutableStateOf(0) }
 
-//    val pagerState = rememberPagerState(pagerCount = {2})
     val pagerState = rememberPagerState(
         initialPage = 0,
         initialPageOffsetFraction = 0f
