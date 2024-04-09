@@ -150,7 +150,6 @@ fun PagerContent() {
         initialPageOffsetFraction = 0f
     ) {
         2
-        // provide pageCount
     }
     val coroutineScope = rememberCoroutineScope()
     Column (modifier = Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally){
