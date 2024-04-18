@@ -7,25 +7,24 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
-
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,12 +33,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat.startActivity
-import androidx.navigation.NavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -85,10 +80,13 @@ fun MainActivityContent(
 ){
     val coroutineScope = rememberCoroutineScope()
     val loginOrPasswordMismatchError = remember { mutableStateOf(false) }
-    Column(modifier = Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center) {
         Header(R.drawable.person, "person image")
-        Hello("someone")
-        Hello("another one")
         LoginTextField(loginValue)
         PasswordTextField(passwordValue)
         if (loginOrPasswordMismatchError.value){
@@ -132,10 +130,6 @@ fun LoginOrPasswordMatchError(){
     )
 }
 
-@Composable
-fun Hello(name: String){
-    Text("Hello $name! Welcome")
-}
 @Composable
 fun Header(image: Int, description: String){
     Image(
@@ -225,13 +219,13 @@ fun PagerContent(
     userDao: UserRepository,
 ) {
     val context = LocalContext.current
-    var page by remember { mutableStateOf(0) }
 
     val loginValue = remember { mutableStateOf(TextFieldValue("")) }
     val passwordValue = remember { mutableStateOf(TextFieldValue("")) }
     val confirmPasswordValue = remember { mutableStateOf(TextFieldValue("")) }
 
-    Column(modifier = Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        modifier = Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally,) {
         Row {
             Button(onClick = {
                 coroutineScope.launch{
@@ -267,63 +261,6 @@ fun PagerContent(
         }
     }
 }
-
-
-//@OptIn(ExperimentalFoundationApi::class)
-//@Composable
-//fun PagerContent(
-//    pagerState: PagerState,
-//    coroutineScope: CoroutineScope,
-//    userDao: UserRepository
-//) {
-//    var page by remember { mutableStateOf(0) }
-//
-//    val loginValue = remember { mutableStateOf(TextFieldValue("")) }
-//    val passwordValue = remember { mutableStateOf(TextFieldValue("")) }
-//    val confirmPasswordValue = remember { mutableStateOf(TextFieldValue("")) }
-//
-////    val pagerState = rememberPagerState(
-////        initialPage = 0,
-////        initialPageOffsetFraction = 0f
-////    ) {
-////        2
-////    }
-////    val coroutineScope = rememberCoroutineScope()
-//    Column (modifier = Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally){
-//        Row {
-//            Button(onClick = {
-//                coroutineScope.launch{
-//                    pagerState.scrollToPage(0)
-//                }
-////            page = 0
-//            }) {
-//                Text("Вход")
-//            }
-//            Button(onClick = {
-//                coroutineScope.launch {
-//                    pagerState.scrollToPage(1)
-//                }
-////            page = 1
-//            }) {
-//                Text("Регистрация")
-//            }
-//        }
-//
-//        HorizontalPager(state = pagerState) { page ->
-//            when (page) {
-//                0 -> MainActivityContent()
-//                1 -> RegisterActivityContent(
-//                    loginValue = loginValue,
-//                    passwordValue = passwordValue,
-//                    confirmPasswordValue = confirmPasswordValue,
-//                    userDao = userDao
-//                )
-//                else -> error("Unknown page index: $page")
-//            }
-//        }
-//    }
-//}
-
 @Composable
 fun RegisterActivityContent(
     loginValue: MutableState<TextFieldValue>,
@@ -335,7 +272,12 @@ fun RegisterActivityContent(
     val coroutineScope = rememberCoroutineScope()
     val passwordMismatchError = remember { mutableStateOf(false) }
     val loginMatchError = remember { mutableStateOf(false) }
-    Column(modifier = Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center) {
         Header(R.drawable.person, "person image")
         LoginTextField(loginValue)
         PasswordTextField(passwordValue)
@@ -370,7 +312,6 @@ fun RegisterActivityContent(
                             val user = User(userName = login, userPassword = password)
                             passwordMismatchError.value = false
 
-                            // Запуск сопрограммы для вставки пользователя в базу данных
                             withContext(Dispatchers.IO) {
                                 userDao.insert(user)
                             }
@@ -387,31 +328,6 @@ fun RegisterActivityContent(
                         }
                     }
                 }
-
-
-//                val existingUser = coroutineScope.async { userDao.getUser(login) }.await()
-//                val deferredExistingUser = coroutineScope.async { userDao.getUser(login) }
-//                val existingUser = deferredExistingUser.await()
-//                if (existingUser != null){
-//                    loginMatchError.value = true
-//                }else{
-//                    if (password == confirmPassword) {
-//                        println("Passwords match!")
-//                        val user = User(userName = login, userPassword = password)
-//                        passwordMismatchError.value = false
-//
-//                        // Запуск сопрограммы для вставки пользователя в базу данных
-//                        coroutineScope.launch {
-//                            userDao.insert(user)
-//                        }
-//
-//                        val intent = Intent(context, SecondActivity::class.java)
-//                        context.startActivity(intent)
-//                    } else {
-//                        println("Passwords do not match!")
-//                        passwordMismatchError.value = true
-//                    }
-//                }
             }
         )
     }
